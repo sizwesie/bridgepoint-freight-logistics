@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Send } from 'lucide-react'
+import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { useScrollAnimation } from '@hooks/useScrollAnimation'
-import type { FormData } from '@types'
+import type { FormData } from '../types'
+
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
 const QuoteRequest = () => {
   const { ref, inView } = useScrollAnimation()
+  const [formStatus, setFormStatus] = useState<FormStatus>('idle')
   const [formData, setFormData] = useState<FormData>({
     name: '',
     company: '',
@@ -21,13 +24,65 @@ const QuoteRequest = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev: FormData) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Handle form submission
+    setFormStatus('submitting')
+
+    try {
+      // Simulate API call - in production, replace with actual endpoint
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      
+      // Log form data for demonstration
+      console.log('Quote request submitted:', formData)
+      
+      setFormStatus('success')
+      
+      // Reset form after success
+      setTimeout(() => {
+        setFormData({
+          name: '',
+          company: '',
+          email: '',
+          phone: '',
+          pickupLocation: '',
+          deliveryLocation: '',
+          vehicleType: '',
+          numberOfVehicles: 1,
+          preferredDate: '',
+          additionalNotes: '',
+        })
+        setFormStatus('idle')
+      }, 3000)
+    } catch {
+      setFormStatus('error')
+      setTimeout(() => setFormStatus('idle'), 3000)
+    }
+  }
+
+  if (formStatus === 'success') {
+    return (
+      <section id="contact" className="section bg-light-grey" ref={ref}>
+        <div className="section-container">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-4xl mx-auto bg-white rounded-2xl shadow-premium-lg p-16 text-center"
+          >
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="text-green-600" size={40} />
+            </div>
+            <h3 className="text-2xl font-bold text-charcoal mb-4">Quote Request Sent!</h3>
+            <p className="text-grey mb-6">
+              Thank you for your interest. Our team will review your request and contact you within 2 business hours.
+            </p>
+            <p className="text-sm text-accent-blue">Check your email for confirmation.</p>
+          </motion.div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -144,9 +199,29 @@ const QuoteRequest = () => {
                 onChange={handleChange}
               />
 
-              <button type="submit" className="btn btn-primary w-full group">
-                Send Quote Request
-                <Send size={18} className="group-hover:translate-x-1 transition" />
+              {formStatus === 'error' && (
+                <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                  <AlertCircle size={20} />
+                  <span>Something went wrong. Please try again.</span>
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                className="btn btn-primary w-full group flex items-center justify-center gap-2"
+                disabled={formStatus === 'submitting'}
+              >
+                {formStatus === 'submitting' ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Sending Request...
+                  </>
+                ) : (
+                  <>
+                    Send Quote Request
+                    <Send size={18} className="group-hover:translate-x-1 transition" />
+                  </>
+                )}
               </button>
             </form>
 
