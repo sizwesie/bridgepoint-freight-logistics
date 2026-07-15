@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Menu, X, Phone, Mail } from 'lucide-react'
-import { COMPANY_NAME, PHONE, EMAIL } from '@utils/constants'
+import { Menu, X, Phone } from 'lucide-react'
+import { COMPANY_NAME, PHONE } from '@utils/constants'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

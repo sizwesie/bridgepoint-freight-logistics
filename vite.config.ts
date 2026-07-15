@@ -2,7 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
+// GitHub Pages deployment uses repo name as base path
+const basePath = process.env.GITHUB_PAGES ? '/bridgepoint-freight-logistics/' : '/'
+
 export default defineConfig({
+  base: basePath,
   plugins: [react()],
   resolve: {
     alias: {

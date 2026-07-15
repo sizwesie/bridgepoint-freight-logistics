@@ -258,6 +258,15 @@ input::placeholder, textarea::placeholder {
   animation: float 3s ease-in-out infinite;
 }
 
+/* Custom Shadows */
+.shadow-premium {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-premium-lg {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   h1 {
